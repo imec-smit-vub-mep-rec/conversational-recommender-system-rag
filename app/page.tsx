@@ -3,21 +3,24 @@
 import { useEffect, useState } from "react";
 import { Message, continueConversation } from "./actions";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
-import { BotCard } from "@/components/ui/message";
+import { BotCard, CardSkeleton } from "@/components/ui/message";
 import { Movies } from "@/components/movie";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 const resubmitMessage =
-  "Given your own knowledge supplemented with the results from the knowledge base, show 3 relevant items to the last user question.";
+  "Given your own knowledge supplemented with the results from the knowledge base, show 3 relevant items to the last user question. Do not retrieve new information again.";
 
 export default function Home() {
   const [conversation, setConversation] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (r?: "assistant"|"user", systemInput?: string) => {
+  const handleSubmit = async (
+    r?: "assistant" | "user",
+    systemInput?: string
+  ) => {
     setInput("");
     setIsLoading(true);
     const { messages } = await continueConversation([
@@ -69,21 +72,28 @@ export default function Home() {
       <div className="space-y-4">
         {conversation.map((message, index) => (
           <div key={index}>
-            {message.content && (
-              <div>
-                <b>{message.role}: </b>
-                {message.result && message.result?.type === "component"
-                  ? elements[message.result.name as keyof typeof elements](
-                      message.result.args
-                    )
-                  : message.display ?? message.content}
-              </div>
-            )}
+            <div>
+              <b>{message.role}: </b>
+              {message.result && message.result?.type === "component"
+                ? elements[message.result.name as keyof typeof elements](
+                    message.result.args
+                  )
+                : message.content &&
+                  !message.content.startsWith('"Results from ')
+                ? message.content
+                : "<empty>"}
+            </div>
           </div>
         ))}
       </div>
 
-      <div>{isLoading && <div>Loading...</div>}</div>
+      <div>
+        {isLoading && (
+          <BotCard>
+            <CardSkeleton />
+          </BotCard>
+        )}
+      </div>
 
       <div>
         <input

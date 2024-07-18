@@ -9,7 +9,7 @@ import { z } from "zod";
 import { findRelevantContent } from "@/lib/ai/embedding";
 import { BotCard, CardSkeleton } from "@/components/ui/message";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
-import { fetchMovieInfo } from "@/lib/data/tmdb.api";
+import { fetchImageUrl, fetchMovieInfo } from "@/lib/data/tmdb.api";
 
 export interface Message {
   role: "user" | "assistant";
@@ -67,14 +67,25 @@ export async function continueConversation(history: Message[]) {
         }),
         execute: async ({ cards }) => {
           stream.append(`Generating conversation starters...`);
+
+          const cardsWithImages = await Promise.all(
+            cards.map(async (card: any) => {
+              const url = await fetchImageUrl(card.image);
+              return {
+                ...card,
+                image: { ...card.image, url },
+              };
+            })
+          );
+
           const r = {
             type: "component",
             name: "ConversationStarters",
             args: {
-              starters: cards,
+              starters: cardsWithImages,
             },
           };
-          stream.done("Done generating conversation starters.");
+          // stream.done("Done generating conversation starters.");
 
           return r;
         },
@@ -87,11 +98,6 @@ export async function continueConversation(history: Message[]) {
         }),
         execute: async ({ question }) => {
           stream.append(`Retrieving data to answer "${question}"...`);
-          stream.append(
-            <BotCard>
-              <CardSkeleton />
-            </BotCard>
-          );
 
           const context = await findRelevantContent(question);
           // stream.done("Found information.");
@@ -141,7 +147,7 @@ export async function continueConversation(history: Message[]) {
     },
   });
 
-  // console.log("Tool results: ", text, JSON.stringify(toolResults));
+  //console.log("Tool results: ", text, JSON.stringify(toolResults));
 
   return {
     messages: [
@@ -152,7 +158,7 @@ export async function continueConversation(history: Message[]) {
         content:
           text || toolResults[0]?.toolName == "getInformation"
             ? JSON.stringify((toolResults[0].result as any).context)
-            : toolResults.map((toolResult) => toolResult.result).join(),
+            : "",
         display: stream.value,
         result: toolResults[0].result,
       },
