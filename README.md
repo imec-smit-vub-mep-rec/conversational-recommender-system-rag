@@ -1,8 +1,12 @@
-# A Conversational Recommender with RAG
+# Babblebot
+## A Conversational Recommender with RAG
 
 
 ## Run
 pnpm run dev
+
+## Browse database contents
+pnpm db:studio
 
 # References
 This project is based on the starter project for the Vercel AI SDK [Retrieval-Augmented Generation (RAG) guide](https://sdk.vercel.ai/docs/guides/rag-chatbot).

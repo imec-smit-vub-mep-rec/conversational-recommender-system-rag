@@ -8,24 +8,47 @@ const options = {
   },
 };
 
-export async function fetchMovieInfo(title: string, year: number) {
+export async function getMovieDetails(title: string, year: number) {
   const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
     title
-  )}&include_adult=false&language=en-US&page=1&append_to_response=credits,videos`;
+  )}&year=${year}&include_adult=false&language=en-US&page=1&limit=1`;
+  console.log(url);
 
-  const data = await fetch(url, options)
-    .then((response) => response.json())
-    .then((data) => {
-      // console.log(data);
-      const topResult = data.results[0];
+  // Step 1: Search for the movie by title and year
+  const searchResponse = await fetch(url, options);
+  const searchData = await searchResponse.json();
 
-      return {
-        ...topResult,
-        image: `${imageBaseString}${topResult.poster_path}`,
-      };
-    });
+  if (searchData.results.length === 0) {
+    throw new Error("Movie not found");
+  }
 
-  return data;
+  const movie = searchData.results[0];
+  const movieId = movie.id;
+
+  // Step 2: Fetch movie details
+  const detailsResponse = await fetch(
+    `https://api.themoviedb.org/3/movie/${movieId}?append_to_response=videos,credits`,
+    options
+  );
+  const detailsData = await detailsResponse.json();
+
+  // Extracting trailer, cast, and director
+  const trailer = detailsData.videos.results.find(
+    (video: any) => video.type === "Trailer" && video.site === "YouTube"
+  );
+  const cast = detailsData.credits.cast;
+  const director = detailsData.credits.crew.find(
+    (member: any) => member.job === "Director"
+  );
+  const image = `${imageBaseString}${movie.poster_path}`;
+
+  return {
+    ...movie,
+    trailer,
+    cast,
+    director,
+    image,
+  };
 }
 
 export async function getMoviePoster(name: string) {

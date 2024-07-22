@@ -12,6 +12,7 @@ export function Movie({ movie }: any) {
         />
       </div>
       <div className="flex-row">
+        <pre>{JSON.stringify(data)}</pre>
         <div>Title: {title}</div>
         <div>Released: {release_date}</div>
         <div>{overview}</div>

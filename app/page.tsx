@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { Message, continueConversation } from "./actions";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
-import { BotCard, CardSkeleton } from "@/components/ui/message";
+import { BotCard, CardSkeleton, UserCard } from "@/components/ui/message";
 import { Movies } from "@/components/movie";
+import { capitalize } from "@/lib/helpers/string";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -68,19 +69,19 @@ export default function Home() {
   }, [conversation]);
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    <div className="flex flex-col w-full max-w-lg py-24 mx-auto stretch">
       <div className="space-y-4">
         {conversation.map((message, index) => (
           <div key={index}>
             <div>
-              <b>{message.role}: </b>
+              <b>{capitalize(message.role)}: </b>
               {message.result && message.result?.type === "component"
                 ? elements[message.result.name as keyof typeof elements](
                     message.result.args
                   )
                 : message.content &&
                   !message.content.startsWith('"Results from ')
-                ? message.content
+                ? <UserCard>{message.content}</UserCard>
                 : "<empty>"}
             </div>
           </div>

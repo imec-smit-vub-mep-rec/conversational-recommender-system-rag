@@ -9,7 +9,7 @@ import { z } from "zod";
 import { findRelevantContent } from "@/lib/ai/embedding";
 import { BotCard, CardSkeleton } from "@/components/ui/message";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
-import { fetchImageUrl, fetchMovieInfo } from "@/lib/data/tmdb.api";
+import { fetchImageUrl, getMovieDetails } from "@/lib/data/tmdb.api";
 
 export interface Message {
   role: "user" | "assistant";
@@ -128,7 +128,7 @@ export async function continueConversation(history: Message[]) {
             movies.map(async (movie: any) => {
               return {
                 ...movie,
-                data: await fetchMovieInfo(movie.title, movie.year),
+                data: await getMovieDetails(movie.title, movie.year),
               };
             })
           );
