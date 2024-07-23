@@ -112,15 +112,36 @@ export async function continueConversation(history: Message[]) {
       showItems: {
         description: "Show the info for given items.",
         parameters: z.object({
+          introduction: z
+            .string()
+            .describe(
+              "An introduction to the items, explaining why they fit with the user request."
+            ),
           movies: z.array(
             z.object({
               // customizable
               title: z.string().describe("The title of the movie."),
               year: z.number().describe("The year the movie was released."),
+              synopsis: z
+                .string()
+                .describe(
+                  "A personalized synopsis of the movie based on the user preferences and watching history."
+                ),
+              reasons_to_like: z.array(z.string()).optional().nullable(),
+              reasons_to_dislike: z.array(z.string()).optional().nullable(),
+              themes: z
+                .array(
+                  z.object({
+                    theme: z.string().describe("The theme of the movie."),
+                    amount: z.number().describe("The amount of the theme."),
+                  })
+                )
+                .optional()
+                .nullable(),
             })
           ),
         }),
-        execute: async ({ movies }) => {
+        execute: async ({ introduction, movies }) => {
           stream.append(`Looking up the info...`);
 
           // Get the item info from the knowledge base
@@ -128,7 +149,7 @@ export async function continueConversation(history: Message[]) {
             movies.map(async (movie: any) => {
               return {
                 ...movie,
-                data: await getMovieDetails(movie.title, movie.year),
+                api_data: await getMovieDetails(movie.title, movie.year),
               };
             })
           );
@@ -137,6 +158,7 @@ export async function continueConversation(history: Message[]) {
             type: "component",
             name: "ItemCard",
             args: {
+              introduction,
               movies: moviesWithTmdbData,
             },
           };

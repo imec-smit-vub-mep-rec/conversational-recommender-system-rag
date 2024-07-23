@@ -6,6 +6,7 @@ import { ConversionStarters } from "@/components/ui/conversation-starter";
 import { BotCard, CardSkeleton, UserCard } from "@/components/ui/message";
 import { Movies } from "@/components/movie";
 import { capitalize } from "@/lib/helpers/string";
+import { IconSend } from "@tabler/icons-react";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -54,7 +55,7 @@ export default function Home() {
     ),
     ItemCard: (args: any) => (
       <BotCard>
-        <Movies movies={args.movies} />
+        <Movies introduction={args.introduction} movies={args.movies} />
       </BotCard>
     ),
   };
@@ -69,20 +70,22 @@ export default function Home() {
   }, [conversation]);
 
   return (
-    <div className="flex flex-col w-full max-w-lg py-24 mx-auto stretch">
+    <div className="flex flex-col w-full max-w-3xl py-24 mx-auto stretch">
       <div className="space-y-4">
         {conversation.map((message, index) => (
           <div key={index}>
             <div>
               <b>{capitalize(message.role)}: </b>
-              {message.result && message.result?.type === "component"
-                ? elements[message.result.name as keyof typeof elements](
-                    message.result.args
-                  )
-                : message.content &&
-                  !message.content.startsWith('"Results from ')
-                ? <UserCard>{message.content}</UserCard>
-                : "<empty>"}
+              {message.result && message.result?.type === "component" ? (
+                elements[message.result.name as keyof typeof elements](
+                  message.result.args
+                )
+              ) : message.content &&
+                !message.content.startsWith('"Results from ') ? (
+                <UserCard>{message.content}</UserCard>
+              ) : (
+                "<empty>"
+              )}
             </div>
           </div>
         ))}
@@ -96,21 +99,29 @@ export default function Home() {
         )}
       </div>
 
-      <div>
-        <input
-          type="text"
-          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-          placeholder="Say something..."
-          value={input}
-          onChange={(event) => {
-            setInput(event.target.value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              handleSubmit();
-            }
-          }}
-        />
+      <div className="fixed bottom-0 w-full max-w-3xl stretch">
+        <div className="relative max-w-lg mx-auto">
+          <input
+            type="text"
+            className="w-full p-4 mb-8 border border-gray-300 rounded-xl shadow-xl z-20"
+            placeholder="Start chatting…"
+            value={input}
+            onChange={(event) => {
+              setInput(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                handleSubmit();
+              }
+            }}
+          />
+          <button
+            className="absolute right-0 p-4"
+            onClick={() => handleSubmit()}
+          >
+            <IconSend />
+          </button>
+        </div>
       </div>
     </div>
   );

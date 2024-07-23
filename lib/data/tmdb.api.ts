@@ -1,3 +1,5 @@
+import { TMDBDetails, TMDBMovie } from "../tmdb";
+
 const apiKey = process.env.TMDB_API_READ_ACCESS_TOKEN;
 const imageBaseString = "https://image.tmdb.org/t/p/w200";
 const options = {
@@ -22,32 +24,40 @@ export async function getMovieDetails(title: string, year: number) {
     throw new Error("Movie not found");
   }
 
-  const movie = searchData.results[0];
+  const movie: TMDBMovie = searchData.results[0];
   const movieId = movie.id;
+  console.log(movie);
 
   // Step 2: Fetch movie details
   const detailsResponse = await fetch(
     `https://api.themoviedb.org/3/movie/${movieId}?append_to_response=videos,credits`,
     options
   );
-  const detailsData = await detailsResponse.json();
+  const detailsData: TMDBDetails = await detailsResponse.json();
+  console.log("detailsdata: ", JSON.stringify(detailsData));
 
   // Extracting trailer, cast, and director
   const trailer = detailsData.videos.results.find(
     (video: any) => video.type === "Trailer" && video.site === "YouTube"
   );
-  const cast = detailsData.credits.cast;
+  const cast = detailsData.credits.cast.map((a) => a.name);
   const director = detailsData.credits.crew.find(
     (member: any) => member.job === "Director"
-  );
+  )?.name;
+  const genres = detailsData.genres.map((genre) => genre.name) || [];
   const image = `${imageBaseString}${movie.poster_path}`;
 
   return {
-    ...movie,
+    id: movieId,
     trailer,
     cast,
     director,
     image,
+    genres,
+    description: detailsData.overview,
+    rating: detailsData.vote_average,
+    datePublished: detailsData.release_date,
+    duration: detailsData.runtime,
   };
 }
 
