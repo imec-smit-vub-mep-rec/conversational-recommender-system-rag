@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { Message, continueConversation } from "./actions";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
-import { BotCard, CardSkeleton, UserCard } from "@/components/ui/message";
+import {
+  BotCard,
+  CardSkeleton,
+  Loader,
+  UserCard,
+} from "@/components/ui/message";
 import { Movies } from "@/components/movie";
 import { capitalize } from "@/lib/helpers/string";
 import { IconSend } from "@tabler/icons-react";
@@ -41,6 +46,11 @@ export default function Home() {
     setIsLoading(false);
     setConversation(messages);
   };
+
+  useEffect(() => {
+    // After initial load: generate conversation starters
+    handleSubmit("user", "Starters");
+  }, []);
 
   const elements = {
     ConversationStarters: (args: any) => (
@@ -94,16 +104,16 @@ export default function Home() {
       <div>
         {isLoading && (
           <BotCard>
-            <CardSkeleton />
+            <Loader msg={conversation.slice(-1)[0]?.content || "Getting your movies..."} />
           </BotCard>
         )}
       </div>
 
-      <div className="fixed bottom-0 w-full max-w-3xl stretch">
+      <div className="fixed bottom-0 w-full max-w-3xl stretch z-20">
         <div className="relative max-w-lg mx-auto">
           <input
             type="text"
-            className="w-full p-4 mb-8 border border-gray-300 rounded-xl shadow-xl z-20"
+            className="w-full p-4 mb-8 border border-gray-300 rounded-xl shadow-xl"
             placeholder="Start chatting…"
             value={input}
             onChange={(event) => {

@@ -28,7 +28,7 @@ function UserOrLogin() {
           <span>Usermenu</span>
         ) : (
           <Button variant="link" asChild className="-ml-2">
-            <Link href="/login">Login</Link>
+            <Link href="/history">Login</Link>
           </Button>
         )}
       </div>

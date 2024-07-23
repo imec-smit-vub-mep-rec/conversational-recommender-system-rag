@@ -2,7 +2,12 @@ import { useState } from "react";
 import { YouTubeEmbed } from "./ui/youtube-embed";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
-import { IconClock, IconEye, IconStarFilled } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconClock,
+  IconEye,
+  IconStarFilled,
+} from "@tabler/icons-react";
 import { convertMinutesToHours } from "@/lib/helpers/time";
 import PieChartComponent from "./ui/pie-chart";
 import Accordion from "./ui/accordion";
@@ -45,7 +50,7 @@ export function Movie({ movie, query, setQuery }: any) {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#0d1829] ">
+    <div className="flex items-center justify-center">
       <div className="mx-auto bg-white rounded-lg shadow-xl flex">
         <div className="w-1/4 relative">
           <Image
@@ -57,14 +62,14 @@ export function Movie({ movie, query, setQuery }: any) {
           />
         </div>
 
-        <div className="grid rounded-lg w-3/4 max-w-[720px] shadow-sm bg-slate-100 flex-grow p-3 z-10">
+        <div className="grid rounded-lg w-3/4 shadow-sm flex-grow p-3 px-5 z-10">
           <a
             href={`${image}`}
             className="group-hover:text-cyan-700 font-bold sm:text-2xl line-clamp-2"
           >
-            {title} | ({datePublished.split("-")[0]})
+            {title} ({datePublished.split("-")[0]})
           </a>
-          <div className="flex gap-5 text-slate-400 pt-2 font-semibold">
+          <div className="flex gap-5 pt-2 font-semibold">
             <div className="flex align-middle items-center gap-1">
               <IconStarFilled
                 className="inline-block w-3 h-3 text-yellow-400"
@@ -83,6 +88,16 @@ export function Movie({ movie, query, setQuery }: any) {
               className="flex align-middle items-center gap-1 hover:bg-zinc-200/40 px-2 py-1 rounded-md cursor-pointer"
               onClick={() => setWatchTrailer(true)}
             >
+              <IconCalendar
+                className="inline-block w-3 h-3 text-yellow-400 "
+                aria-hidden="true"
+              />{" "}
+              <span>{datePublished}</span>
+            </div>
+            <div
+              className="flex align-middle items-center gap-1 hover:bg-zinc-200/40 px-2 py-1 rounded-md cursor-pointer"
+              onClick={() => setWatchTrailer(true)}
+            >
               <IconEye
                 className="inline-block w-3 h-3 text-yellow-400 "
                 aria-hidden="true"
@@ -95,7 +110,7 @@ export function Movie({ movie, query, setQuery }: any) {
               {synopsis}{" "}
             </span>
           </div>
-          <div className="my-3">
+          <div className="my-2">
             <span className="text-sm font-semibold mr-1 ">Director:</span>
             <Badge color="orange" selected={query.director == director}>
               <input
@@ -103,14 +118,14 @@ export function Movie({ movie, query, setQuery }: any) {
                 aria-describedby="comments-description"
                 name="comments"
                 type="checkbox"
-                className="h-0 w-0 rounded invisible"
+                className="h-0 w-0 rounded hidden"
                 checked={query.director == director}
                 onChange={() => console.log("to implement")}
               />
               <label htmlFor={`${id}-director-${director}`}>{director}</label>
             </Badge>
           </div>
-          <div className="my-4">
+          <div className="my-2">
             <span className="text-sm font-semibold mr-1">Genres:</span>
             {genres.map((genre: string, index: number) => (
               <Badge
@@ -123,7 +138,7 @@ export function Movie({ movie, query, setQuery }: any) {
                   aria-describedby="comments-description"
                   name="comments"
                   type="checkbox"
-                  className="invisible"
+                  className="hidden"
                   checked={query.genres?.includes(genre)}
                   onChange={() => console.log("to implement")}
                 />
@@ -131,39 +146,38 @@ export function Movie({ movie, query, setQuery }: any) {
               </Badge>
             ))}
           </div>
-          <div className="my-3">
-            <span className="text-sm font-semibold mr-1">Actors:</span>
-            {cast.map((actor: string, index: number) => (
-              <Badge
-                color="pink"
-                selected={query.actors?.includes(actor)}
-                key={`${title}-actor-${index}`}
-              >
-                <input
-                  id={`${id}-actor-` + actor}
-                  aria-describedby="comments-description"
-                  name="comments"
-                  type="checkbox"
-                  className="invisible"
-                  checked={query.actors?.includes(actor)}
-                  onChange={() => console.log("to implement")}
-                />
-                <label htmlFor={`${id}-actor-` + actor}>{actor}</label>
-              </Badge>
-            ))}
-          </div>
           <div>
             <Accordion
               items={[
                 {
+                  title: "Cast",
+                  content: cast.map((actor: string, index: number) => (
+                    <Badge
+                      color="pink"
+                      selected={query.actors?.includes(actor)}
+                      key={`${title}-actor-${index}`}
+                    >
+                      <input
+                        id={`${id}-actor-` + actor}
+                        aria-describedby="comments-description"
+                        name="comments"
+                        type="checkbox"
+                        className="hidden"
+                        checked={query.actors?.includes(actor)}
+                        onChange={() => console.log("to implement")}
+                      />
+                      <label htmlFor={`${id}-actor-` + actor}>{actor}</label>
+                    </Badge>
+                  )),
+                },
+                {
                   title: "Neutral description",
                   content: description,
                 },
-                /*{ title: 'Reviews summary', content: movie.ReviewBody },
-                { title: 'Thematics', content: movie.Keywords },*/
+                /*{ title: 'Reviews summary', content: movie.ReviewBody },*/
                 {
                   title: "Why you may like it",
-                  content: reasons_to_like || "",
+                  content: reasons_to_like.toString() || "",
                 },
                 ...(reasons_to_dislike
                   ? [

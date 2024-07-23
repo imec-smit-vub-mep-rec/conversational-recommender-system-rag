@@ -12,7 +12,7 @@ const Accordion = ({ items }: { items: AccordionItem[] }) => {
   return (
     <div className="mx-auto">
       {items.map((item, index) => (
-        <div key={index} className="bg-white border rounded-md my-6">
+        <div key={index} className="bg-white border rounded-md my-1">
           <button
             className="w-full px-8 py-4 text-left"
             onClick={() => setOpenIndex(index === openIndex ? null : index)}

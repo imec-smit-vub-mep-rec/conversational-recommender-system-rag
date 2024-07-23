@@ -34,8 +34,8 @@ export function ConversionStarters({
           />
         )}
       </div>
-      <div className="flex-grow ml-2 overflow-hidden">
-        <div className="text-sm font-semibold" style={{ maxHeight: "64px" }}>
+      <div className="flex-grow ml-2 p-2 overflow-hidden">
+        <div className="text-sm font-semibold" style={{ maxHeight: "128px" }}>
           {starter.heading}
         </div>
         <div
@@ -44,7 +44,7 @@ export function ConversionStarters({
             display: "-webkit-box",
             WebkitLineClamp: 4,
             WebkitBoxOrient: "vertical",
-            maxHeight: "64px",
+            maxHeight: "128px",
           }}
         >
           {starter.subheading}

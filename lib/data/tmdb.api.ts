@@ -37,9 +37,11 @@ export async function getMovieDetails(title: string, year: number) {
   console.log("detailsdata: ", JSON.stringify(detailsData));
 
   // Extracting trailer, cast, and director
-  const trailer = detailsData.videos.results.find(
-    (video: any) => video.type === "Trailer" && video.site === "YouTube"
-  );
+  const trailer =
+    "https://www.youtube.com/embed/" +
+    detailsData.videos.results.find(
+      (video: any) => video.type === "Trailer" && video.site === "YouTube"
+    )?.key;
   const cast = detailsData.credits.cast.map((a) => a.name);
   const director = detailsData.credits.crew.find(
     (member: any) => member.job === "Director"

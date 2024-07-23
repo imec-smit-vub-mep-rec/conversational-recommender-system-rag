@@ -1,3 +1,4 @@
+"use client";
 export const YouTubeEmbed = ({
   title,
   trailerUrl,

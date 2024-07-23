@@ -10,6 +10,7 @@ import { findRelevantContent } from "@/lib/ai/embedding";
 import { BotCard, CardSkeleton } from "@/components/ui/message";
 import { ConversionStarters } from "@/components/ui/conversation-starter";
 import { fetchImageUrl, getMovieDetails } from "@/lib/data/tmdb.api";
+import { getPreferences } from "./history/actions";
 
 export interface Message {
   role: "user" | "assistant";
@@ -21,6 +22,7 @@ export interface Message {
 
 export async function continueConversation(history: Message[]) {
   const stream = createStreamableValue();
+  const userHistory = await getPreferences("dummy");
 
   // console.log("History: ", history);
   const { text, toolResults } = await generateText({
@@ -30,7 +32,7 @@ export async function continueConversation(history: Message[]) {
     You use this extra information to supplement to your prior knowledge. Do not assume things about items from the knowledge base that are not explicitly stated (e.g. do not assume an actor plays in a movie if not mentioned).
     Also use your own knowledge about less recent items that are not in the knowledge base.
     
-    Recommend movies taking into account the user history: [5 stars: Superman, Spider-man Accross the Spider-Verse, The Dark Knight, The Avengers, Iron Man 3; 4 stars: Deadpool, Wall-E, Shrek, Kung-Fu Panda 2; 3 stars: Crazy, Stupid Love].
+    Recommend movies taking into account the user history: ${userHistory}.
 
     If you recommend movies, do not return it as plain text. Instead, call the 'showItems' tool.
     If you don't know with certainty, respond, "Sorry, I don't know."
@@ -39,7 +41,7 @@ export async function continueConversation(history: Message[]) {
     tools: {
       generateConversationStarters: {
         description:
-          "Based on the user watching history, recommend some conversation starters centered around themes, actors, directors, countries, ...",
+          "Based on the user watching history, recommend 4 original conversation starters centered around themes, actors, directors, countries, ...",
         parameters: z.object({
           cards: z.array(
             z.object({
