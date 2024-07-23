@@ -1,4 +1,0 @@
-FILM
-id | title | year | director | actors | genres | audience_rating | critics_rating | budget | box_office | runtime | countries | languages | imdb_url | description | description_embedding | poster_url | trailer_url | created_at | updated_at | reviews | reviews_embeddings
-
-id | title | year | directors | actors | genres | audience_rating | critics_rating | runtime | languages | imdb_url | description | description_embedding | poster_url | trailer_url | created_at | updated_at

@@ -20,7 +20,9 @@ export async function POST(req: Request) {
   return Response.json({ time_elapsed });
 }
 
-const load_data = async (filePath: string = "/lib/data/movies.csv") => {
+const load_data = async (
+  filePath: string = "/lib/data/example_data_movies.csv"
+) => {
   try {
     // 1. Read the CSV file
     readCSVAndFormat(filePath)
@@ -29,11 +31,9 @@ const load_data = async (filePath: string = "/lib/data/movies.csv") => {
         console.log("Rows:", rows);
 
         // 3. Add rows as resources
-        /*
         rows.forEach(async (row) => {
           await createResource({ content: row });
         });
-        */
       })
       .catch(console.error);
   } catch (error) {
