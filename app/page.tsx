@@ -12,6 +12,7 @@ import {
 import { Movies } from "@/components/movie";
 import { capitalize } from "@/lib/helpers/string";
 import { IconSend } from "@tabler/icons-react";
+import { getGreeting } from "@/lib/helpers/time";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -26,7 +27,8 @@ export default function Home() {
 
   const handleSubmit = async (
     r?: "assistant" | "user",
-    systemInput?: string
+    systemInput?: string,
+    hidden?: boolean
   ) => {
     setInput("");
     setIsLoading(true);
@@ -40,6 +42,7 @@ export default function Home() {
       {
         role: r ?? "user",
         content: systemInput ?? input,
+        hidden: hidden ?? false,
       },
     ]);
 
@@ -49,12 +52,17 @@ export default function Home() {
 
   useEffect(() => {
     // After initial load: generate conversation starters
-    handleSubmit("user", "Starters");
+    handleSubmit("user", "Starters", true);
   }, []);
 
   const elements = {
     ConversationStarters: (args: any) => (
       <BotCard>
+        <p className="pb-5">
+          {getGreeting()}! Let's watch a movie 🎬
+          <br />
+          Here are some ideas to get you started:
+        </p>
         <ConversionStarters
           starters={args.starters}
           submitMessage={(prompt: string) => {
@@ -65,7 +73,13 @@ export default function Home() {
     ),
     ItemCard: (args: any) => (
       <BotCard>
-        <Movies introduction={args.introduction} movies={args.movies} />
+        <Movies
+          introduction={args.introduction}
+          movies={args.movies}
+          submitMessage={(prompt: string) => {
+            handleSubmit("user", prompt);
+          }}
+        />
       </BotCard>
     ),
   };
@@ -73,9 +87,9 @@ export default function Home() {
   useEffect(() => {
     console.log("Conversation changed: ", conversation);
     const lastMessage = conversation.slice(-1)[0];
-    if (lastMessage?.function == "getInformation") {
+    if (lastMessage?.function == "retrieveMostSimilarItems") {
       // Resubmit the last message to the server, in order to get the information
-      handleSubmit("assistant", resubmitMessage);
+      handleSubmit("assistant", resubmitMessage, true);
     }
   }, [conversation]);
 
@@ -84,19 +98,21 @@ export default function Home() {
       <div className="space-y-4">
         {conversation.map((message, index) => (
           <div key={index}>
-            <div>
-              <b>{capitalize(message.role)}: </b>
-              {message.result && message.result?.type === "component" ? (
-                elements[message.result.name as keyof typeof elements](
-                  message.result.args
-                )
-              ) : message.content &&
-                !message.content.startsWith('"Results from ') ? (
-                <UserCard>{message.content}</UserCard>
-              ) : (
-                "<empty>"
-              )}
-            </div>
+            {!message.hidden && (
+              <div>
+                <b>{capitalize(message.role)}: </b>
+                {message.result && message.result?.type === "component" ? (
+                  elements[message.result.name as keyof typeof elements](
+                    message.result.args
+                  )
+                ) : message.content &&
+                  !message.content.startsWith('"Results from ') ? (
+                  <UserCard>{message.content}</UserCard>
+                ) : (
+                  "<empty>"
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -104,7 +120,11 @@ export default function Home() {
       <div>
         {isLoading && (
           <BotCard>
-            <Loader msg={conversation.slice(-1)[0]?.content || "Getting your movies..."} />
+            <Loader
+              msg={
+                conversation.slice(-1)[0]?.content || "Getting your movies..."
+              }
+            />
           </BotCard>
         )}
       </div>

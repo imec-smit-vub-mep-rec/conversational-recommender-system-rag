@@ -20,11 +20,11 @@ Rename the `.env.example` file to `.env` and fill in the required variables (see
 ### Create a Redis KV store
 
 We use a KV store to save the user preferences. We choose for a different database to make the distinction with the embeddings in the Postgres database.
-In this demo, we will use the Redis KV store from [Vercel](https://vercel.com/docs/solutions/redis). However, feel free to use any other KV store.
+In this demo, we will use the Redis KV store from [Vercel](https://vercel.com/docs/storage/vercel-kv). However, feel free to use any other KV store.
 
 ### Create a Postgres database
 
-In this demo, we use the Postgres database from [Vercel](https://vercel.com/docs/solutions/postgres). However, feel free to use any other Postgres database.
+In this demo, we use the Postgres database from [Vercel](https://vercel.com/docs/storage/vercel-postgres). However, feel free to use any other Postgres database.
 Add the connection string to the `.env` file.
 
 ### Install dependencies

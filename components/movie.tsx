@@ -120,7 +120,13 @@ export function Movie({ movie, query, setQuery }: any) {
                 type="checkbox"
                 className="h-0 w-0 rounded hidden"
                 checked={query.director == director}
-                onChange={() => console.log("to implement")}
+                onChange={() => {
+                  if (query.director == director) {
+                    setQuery({ ...query, director: undefined });
+                  } else {
+                    setQuery({ ...query, director });
+                  }
+                }}
               />
               <label htmlFor={`${id}-director-${director}`}>{director}</label>
             </Badge>
@@ -140,7 +146,16 @@ export function Movie({ movie, query, setQuery }: any) {
                   type="checkbox"
                   className="hidden"
                   checked={query.genres?.includes(genre)}
-                  onChange={() => console.log("to implement")}
+                  onChange={() => {
+                    if (query.genres?.includes(genre)) {
+                      setQuery({
+                        ...query,
+                        genres: query.genres.filter((g: string) => g !== genre),
+                      });
+                    } else {
+                      setQuery({ ...query, genres: [...query.genres, genre] });
+                    }
+                  }}
                 />
                 <label htmlFor={`${id}-genre-${genre}`}>{genre}</label>
               </Badge>
@@ -164,7 +179,21 @@ export function Movie({ movie, query, setQuery }: any) {
                         type="checkbox"
                         className="hidden"
                         checked={query.actors?.includes(actor)}
-                        onChange={() => console.log("to implement")}
+                        onChange={() => {
+                          if (query.actors?.includes(actor)) {
+                            setQuery({
+                              ...query,
+                              actors: query.actors?.filter(
+                                (a: string) => a !== actor
+                              ),
+                            });
+                          } else {
+                            setQuery({
+                              ...query,
+                              actors: [...query.actors, actor],
+                            });
+                          }
+                        }}
                       />
                       <label htmlFor={`${id}-actor-` + actor}>{actor}</label>
                     </Badge>
@@ -200,18 +229,76 @@ export function Movie({ movie, query, setQuery }: any) {
   );
 }
 
-export function Movies({ introduction, movies }: any) {
-  const [query, setQuery] = useState({});
+export interface RefineSearchQuery {
+  actors?: string[];
+  genres?: string[];
+  keywords?: string[];
+  rating?: number;
+  year?: number;
+  duration?: number;
+  director?: string;
+  like_titles?: string[];
+  language?: string;
+}
+
+interface MoviesProps {
+  introduction: string;
+  movies: any[];
+  submitMessage: (prompt: string) => void;
+}
+
+export function Movies({ introduction, movies, submitMessage }: MoviesProps) {
+  const [query, setQuery] = useState<RefineSearchQuery>({
+    actors: [],
+    genres: [],
+    director: undefined,
+  });
+
+  const handleRefine = async () => {
+    if (!query.actors && !query.director && !query.genres) return;
+
+    const userMessage = `Recommend multiple 
+    ${
+      query?.genres && query?.genres?.length > 0
+        ? query.genres?.toString().toLowerCase()
+        : ""
+    } 
+    movies ${
+      query?.actors && query?.actors?.length > 0
+        ? "starring " + query.actors?.toString()
+        : ""
+    } 
+    ${
+      query?.director
+        ? "directed by " + query.director + " or a similar director"
+        : ""
+    }
+    .`;
+
+    if (submitMessage) submitMessage(userMessage);
+  };
+
   const m = movies.map((movie: any, index: number) => (
     // @ts-ignore
     <Movie key={index} movie={movie} query={query} setQuery={setQuery} />
   ));
 
+  const submitQueryComponent =
+    Object.keys(query).length > 0 ? (
+      <button
+        onClick={handleRefine}
+        className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Refine search &rarr;
+      </button>
+    ) : null;
+
   return (
-    <div>
+    <div className="relative">
       {introduction && <p className="mb-2">{introduction}</p>}
       <div className="mb-4 flex flex-col gap-2 overflow-y-scroll pb-4 text-sm sm:flex-col">
         {m}
+        <div className="m-auto z-10">{submitQueryComponent}</div>
       </div>
     </div>
   );

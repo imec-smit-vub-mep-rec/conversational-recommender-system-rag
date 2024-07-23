@@ -1,14 +1,9 @@
 "use server";
-
-import { Movie } from "@/components/movie";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { createStreamableUI, createStreamableValue } from "ai/rsc";
-import { ReactNode } from "react";
+import { createStreamableValue } from "ai/rsc";
 import { z } from "zod";
-import { findRelevantContent } from "@/lib/ai/embedding";
-import { BotCard, CardSkeleton } from "@/components/ui/message";
-import { ConversionStarters } from "@/components/ui/conversation-starter";
+import { retrieveMostSimilarItems } from "@/lib/ai/embedding";
 import { fetchImageUrl, getMovieDetails } from "@/lib/data/tmdb.api";
 import { getPreferences } from "./history/actions";
 
@@ -18,6 +13,7 @@ export interface Message {
   content: string;
   display?: any;
   result?: any;
+  hidden?: boolean;
 }
 
 export async function continueConversation(history: Message[]) {
@@ -27,15 +23,17 @@ export async function continueConversation(history: Message[]) {
   // console.log("History: ", history);
   const { text, toolResults } = await generateText({
     model: openai("gpt-4o"),
+    temperature: 1.2,
     system: `You are a helpful ${process.env.NEXT_PUBLIC_DOMAIN} recommender.
     Before answering any questions, you check your knowledge base to retrieve some recent items beyond you knowledge cutoff that might (not) be relevant for the query.
     You use this extra information to supplement to your prior knowledge. Do not assume things about items from the knowledge base that are not explicitly stated (e.g. do not assume an actor plays in a movie if not mentioned).
-    Also use your own knowledge about less recent items that are not in the knowledge base.
+    Also use your own knowledge of items that are not in the knowledge base.
     
     Recommend movies taking into account the user history: ${userHistory}.
 
+    Do not recommend movies that the user has already seen or if you have recommended them already in the conversation.
     If you recommend movies, do not return it as plain text. Instead, call the 'showItems' tool.
-    If you don't know with certainty, respond, "Sorry, I don't know."
+    If you don't know with certainty, respond, "Sorry, I don't know." or ask for clarification.
     Do not engage in a conversation that is not related to the ${process.env.NEXT_PUBLIC_DOMAIN} domain.`,
     messages: history,
     tools: {
@@ -92,7 +90,7 @@ export async function continueConversation(history: Message[]) {
           return r;
         },
       },
-      getInformation: {
+      retrieveMostSimilarItems: {
         description:
           "Get information from your knowledge base to answer questions.",
         parameters: z.object({
@@ -101,7 +99,7 @@ export async function continueConversation(history: Message[]) {
         execute: async ({ question }) => {
           stream.append(`Retrieving data to answer "${question}"...`);
 
-          const context = await findRelevantContent(question);
+          const context = await retrieveMostSimilarItems(question);
           // stream.done("Found information.");
           return {
             type: "retrieval",
@@ -180,7 +178,7 @@ export async function continueConversation(history: Message[]) {
         role: "assistant" as const,
         function: toolResults[0]?.toolName,
         content:
-          text || toolResults[0]?.toolName == "getInformation"
+          text || toolResults[0]?.toolName == "retrieveMostSimilarItems"
             ? JSON.stringify((toolResults[0].result as any).context)
             : "",
         display: stream.value,

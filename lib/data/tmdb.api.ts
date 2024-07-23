@@ -132,7 +132,7 @@ export async function getMovieDetails(title: string, year: number) {
 
   const movie: TMDBMovie = searchData.results[0];
   const movieId = movie.id;
-  console.log(movie);
+  //console.log(movie);
 
   // Step 2: Fetch movie details
   const detailsResponse = await fetch(
@@ -140,7 +140,7 @@ export async function getMovieDetails(title: string, year: number) {
     options
   );
   const detailsData: TMDBDetails = await detailsResponse.json();
-  console.log("detailsdata: ", JSON.stringify(detailsData));
+  // console.log("detailsdata: ", JSON.stringify(detailsData));
 
   // Extracting trailer, cast, and director
   const trailer =
@@ -191,7 +191,6 @@ export async function getActorImage(actorName: string) {
   await fetch(url, options)
     .then((res) => res.json())
     .then((json) => {
-      console.log("json:", json);
       image = imageBaseString + json.results[0].profile_path;
     })
     .catch((err) => console.error("error:" + err));
