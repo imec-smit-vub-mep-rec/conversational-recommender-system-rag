@@ -58,7 +58,7 @@ export function Movie({ movie, query, setQuery }: any) {
             alt={title}
             width={375}
             height={200}
-            className="rounded-t-lg justify-center grid h-80 object-cover"
+            className="rounded-lg justify-center grid h-80 object-cover"
           />
         </div>
 
@@ -206,7 +206,7 @@ export function Movie({ movie, query, setQuery }: any) {
                 /*{ title: 'Reviews summary', content: movie.ReviewBody },*/
                 {
                   title: "Why you may like it",
-                  content: reasons_to_like.toString() || "",
+                  content: reasons_to_like?.toString() || "",
                 },
                 ...(reasons_to_dislike
                   ? [

@@ -98,7 +98,7 @@ export default function Home() {
       <div className="space-y-4">
         {conversation.map((message, index) => (
           <div key={index}>
-            {!message.hidden && (
+            {!message.hidden && (message.content || message.result) && (
               <div>
                 <b>{capitalize(message.role)}: </b>
                 {message.result && message.result?.type === "component" ? (
@@ -109,7 +109,7 @@ export default function Home() {
                   !message.content.startsWith('"Results from ') ? (
                   <UserCard>{message.content}</UserCard>
                 ) : (
-                  "<empty>"
+                  "<hidden>"
                 )}
               </div>
             )}

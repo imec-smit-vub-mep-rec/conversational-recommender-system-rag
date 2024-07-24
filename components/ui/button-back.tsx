@@ -8,7 +8,7 @@ export const BackButton = () => {
   };
 
   return (
-    <Button onClick={goBack} variant="ghost">
+    <Button onClick={goBack} variant="outline">
       &larr; Back
     </Button>
   );

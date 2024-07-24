@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header/header";
@@ -8,8 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   metadataBase: new URL(`https://${process.env.VERCEL_URL}`),
   title: {
-    default: "Babblebot | CRS with RAG",
-    template: `%s - Babblebot`,
+    default: "GenUIne CRS - CRS with RAG",
+    template: `%s - GenUIne CRS`,
   },
   description:
     "A Conversational Recommender with Retrieval-Augmented Generation",

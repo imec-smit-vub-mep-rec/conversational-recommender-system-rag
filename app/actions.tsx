@@ -5,7 +5,7 @@ import { createStreamableValue } from "ai/rsc";
 import { z } from "zod";
 import { retrieveMostSimilarItems } from "@/lib/ai/embedding";
 import { fetchImageUrl, getMovieDetails } from "@/lib/data/tmdb.api";
-import { getPreferences } from "./history/actions";
+import { getPreferences } from "./preferences/actions";
 
 export interface Message {
   role: "user" | "assistant";
@@ -18,7 +18,7 @@ export interface Message {
 
 export async function continueConversation(history: Message[]) {
   const stream = createStreamableValue();
-  const userHistory = await getPreferences("dummy");
+  const userPreferences = await getPreferences("dummy");
 
   // console.log("History: ", history);
   const { text, toolResults } = await generateText({
@@ -29,7 +29,7 @@ export async function continueConversation(history: Message[]) {
     You use this extra information to supplement to your prior knowledge. Do not assume things about items from the knowledge base that are not explicitly stated (e.g. do not assume an actor plays in a movie if not mentioned).
     Also use your own knowledge of items that are not in the knowledge base.
     
-    Recommend movies taking into account the user history: ${userHistory}.
+    Recommend movies taking into account the user history: ${userPreferences}.
 
     Do not recommend movies that the user has already seen or if you have recommended them already in the conversation.
     If you recommend movies, do not return it as plain text. Instead, call the 'showItems' tool.

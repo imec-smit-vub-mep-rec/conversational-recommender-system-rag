@@ -1,4 +1,4 @@
-# Babblebot
+# GenUIne CRS
 
 ## A Conversational Recommender with RAG
 
@@ -45,9 +45,9 @@ pnpm db:migrate
 2. Reference the file in `app/init/route.ts`
 3. Visit https://localhost:3000/init once to load in the data
 
-### Optional: Edit user history
+### Optional: Edit user preferences
 
-Visit https://localhost:3000/history page and add some user interactions as an array.
+Visit https://localhost:3000/preferences page and add some user interactions as an array.
 
 ## Run
 
