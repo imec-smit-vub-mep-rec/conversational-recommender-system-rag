@@ -25,7 +25,7 @@ export default function Home() {
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (
+  const createPrompt = async (
     r?: "assistant" | "user",
     systemInput?: string,
     hidden?: boolean
@@ -52,7 +52,7 @@ export default function Home() {
 
   useEffect(() => {
     // After initial load: generate conversation starters
-    handleSubmit("user", "Starters", true);
+    createPrompt("user", "Starters", true);
   }, []);
 
   const elements = {
@@ -66,7 +66,7 @@ export default function Home() {
         <ConversionStarters
           starters={args.starters}
           submitMessage={(prompt: string) => {
-            handleSubmit("user", prompt);
+            createPrompt("user", prompt);
           }}
         />
       </BotCard>
@@ -77,7 +77,7 @@ export default function Home() {
           introduction={args.introduction}
           movies={args.movies}
           submitMessage={(prompt: string) => {
-            handleSubmit("user", prompt);
+            createPrompt("user", prompt);
           }}
         />
       </BotCard>
@@ -89,7 +89,7 @@ export default function Home() {
     const lastMessage = conversation.slice(-1)[0];
     if (lastMessage?.function == "retrieveMostSimilarItems") {
       // Resubmit the last message to the server, in order to get the information
-      handleSubmit("assistant", resubmitMessage, true);
+      createPrompt("assistant", resubmitMessage, true);
     }
   }, [conversation]);
 
@@ -141,13 +141,13 @@ export default function Home() {
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                handleSubmit();
+                createPrompt();
               }
             }}
           />
           <button
             className="absolute right-0 p-4"
-            onClick={() => handleSubmit()}
+            onClick={() => createPrompt()}
           >
             <IconSend />
           </button>

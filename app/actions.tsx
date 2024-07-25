@@ -37,7 +37,7 @@ export async function continueConversation(history: Message[]) {
     Do not engage in a conversation that is not related to the ${process.env.NEXT_PUBLIC_DOMAIN} domain.`,
     messages: history,
     tools: {
-      generateConversationStarters: {
+      showConversationStarters: {
         description:
           "Based on the user watching history, recommend 4 original conversation starters centered around themes, actors, directors, countries, ...",
         parameters: z.object({
