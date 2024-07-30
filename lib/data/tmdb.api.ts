@@ -107,7 +107,7 @@ export interface TMDBDetails {
 }
 
 const apiKey = process.env.TMDB_API_READ_ACCESS_TOKEN;
-const imageBaseString = "https://image.tmdb.org/t/p/w200";
+const imageBaseString = "https://image.tmdb.org/t/p/w400";
 const options = {
   method: "GET",
   headers: {

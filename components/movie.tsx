@@ -52,20 +52,21 @@ export function Movie({ movie, query, setQuery }: any) {
   return (
     <div className="flex items-center justify-center">
       <div className="mx-auto bg-white rounded-lg shadow-xl flex">
-        <div className="w-1/4 relative">
+        <div className="w-1/3 relative bg-red">
           <Image
             src={image}
             alt={title}
             width={375}
             height={200}
-            className="rounded-lg justify-center grid h-80 object-cover"
+            className="rounded-l-lg justify-center grid object-cover h-full w-full"
+            style={{ height: '100%', width: '100%', objectFit: 'cover' }}
           />
         </div>
 
-        <div className="grid rounded-lg w-3/4 shadow-sm flex-grow p-3 px-5 z-10">
+        <div className="grid rounded-lg w-2/3 shadow-sm flex-grow p-3 px-5 z-10">
           <a
             href={`${image}`}
-            className="group-hover:text-cyan-700 font-bold sm:text-2xl line-clamp-2"
+            className="hover:text-cyan-700 font-bold sm:text-xl line-clamp-2"
           >
             {title} ({datePublished.split("-")[0]})
           </a>
@@ -105,7 +106,7 @@ export function Movie({ movie, query, setQuery }: any) {
               <span>Watch trailer</span>
             </div>
           </div>
-          <div className="h-28">
+          <div className="h-13">
             <span className="line-clamp-4 py-2 text-sm font-light leading-relaxed">
               {synopsis}{" "}
             </span>
@@ -199,10 +200,11 @@ export function Movie({ movie, query, setQuery }: any) {
                     </Badge>
                   )),
                 },
+                /*
                 {
                   title: "Neutral description",
                   content: description,
-                },
+                },*/
                 /*{ title: 'Reviews summary', content: movie.ReviewBody },*/
                 {
                   title: "Why you may like it",
@@ -296,7 +298,7 @@ export function Movies({ introduction, movies, submitMessage }: MoviesProps) {
   return (
     <div className="relative">
       {introduction && <p className="mb-2">{introduction}</p>}
-      <div className="mb-4 flex flex-col gap-2 overflow-y-scroll pb-4 text-sm sm:flex-col">
+      <div className="mb-4 flex flex-col gap-2 pb-4 text-sm sm:flex-col">
         {m}
         <div className="m-auto z-10">{submitQueryComponent}</div>
       </div>

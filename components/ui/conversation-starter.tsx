@@ -35,7 +35,7 @@ export function ConversionStarters({
         )}
       </div>
       <div className="flex-grow ml-2 p-2 overflow-hidden">
-        <div className="text-sm font-semibold" style={{ maxHeight: "128px" }}>
+        <div className="text-md font-semibold my-2" style={{ maxHeight: "128px" }}>
           {starter.heading}
         </div>
         <div
