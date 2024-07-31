@@ -9,7 +9,7 @@ In this demo, we show an adaptable proof-of-concept web application for a conver
 ### Clone the repository
 
 ```bash
-git clone https://github.com/imec-smit-vub-mep-rec/conversational-recommender-system-rag
+git clone {{repo-url}}
 cd conversational-recommender-system-rag
 ```
 
